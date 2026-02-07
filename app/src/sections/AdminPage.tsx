@@ -48,8 +48,8 @@ interface AdminPageProps {
   formulas: Formula[];
   books: Book[];
   monthlyStats: MonthlyStats[];
-  onAddCourse: (course: Omit<Course, 'id' | 'type' | 'date'>) => void;
-  onUpdateCourse: (id: string, updates: Partial<Course>) => void;
+  onAddCourse: (course: Omit<Course, 'id' | 'type' | 'date'>) => Promise<any>;
+  onUpdateCourse: (id: string, updates: Partial<Course>) => Promise<any>;
   onRemoveCourse: (id: string) => void;
   onAddProblem: (problem: Omit<Problem, 'id' | 'type' | 'date'>) => void;
   onUpdateProblem: (id: string, updates: Partial<Problem>) => void;
@@ -339,8 +339,8 @@ function CoursesManager({
   onRemove 
 }: { 
   courses: Course[]; 
-  onAdd: (course: Omit<Course, 'id' | 'type' | 'date'>) => void;
-  onUpdate: (id: string, updates: Partial<Course>) => void;
+  onAdd: (course: Omit<Course, 'id' | 'type' | 'date'>) => Promise<any>;
+  onUpdate: (id: string, updates: Partial<Course>) => Promise<any>;
   onRemove: (id: string) => void;
 }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -385,16 +385,28 @@ function CoursesManager({
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (formData.title && formData.category && formData.description && formData.content) {
-      if (editingId) {
-        onUpdate(editingId, formData);
-        setEditingId(null);
-      } else {
-        onAdd(formData);
+      try {
+        if (editingId) {
+          await onUpdate(editingId, formData);
+          alert('Cours modifié avec succès !');
+          setEditingId(null);
+        } else {
+          const result = await onAdd(formData);
+          if (result && result.localOnly) {
+            alert('Cours ajouté localement (mode hors ligne)');
+          } else {
+            alert('Cours ajouté avec succès !');
+          }
+        }
+        resetForm();
+        setIsAdding(false);
+      } catch (error) {
+        alert('Erreur: ' + (error instanceof Error ? error.message : 'Erreur inconnue'));
       }
-      resetForm();
-      setIsAdding(false);
+    } else {
+      alert('Veuillez remplir tous les champs obligatoires (Titre, Catégorie, Description, Contenu)');
     }
   };
 

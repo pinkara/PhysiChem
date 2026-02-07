@@ -124,22 +124,22 @@ export function useCourses() {
       id: `c${Date.now()}`,
       type: 'course',
       date: new Date().toISOString().split('T')[0],
-      // Assurer que les champs optionnels ne sont pas undefined
       image: course.image || '',
       imageCredits: course.imageCredits || '',
       categoryColor: course.categoryColor || '#f0f9ff',
       categoryTextColor: course.categoryTextColor || '#0284c7',
     };
     
-    // Ajouter d'abord à Supabase si configuré
     if (isSupabaseConfigured()) {
-      const dbCourse = await addCourseToDB(newCourse);
-      if (dbCourse) {
-        // Recharger depuis Supabase pour avoir les données à jour
+      try {
+        const dbCourse = await addCourseToDB(newCourse);
         const freshData = await fetchCourses();
         setCourses(freshData);
         saveToStorage(STORAGE_KEYS.COURSES, freshData);
-        return dbCourse;
+        return { success: true, data: dbCourse };
+      } catch (error) {
+        console.error('Error adding course to Supabase:', error);
+        throw error; // Propager l'erreur pour l'afficher
       }
     }
     
@@ -149,18 +149,21 @@ export function useCourses() {
       saveToStorage(STORAGE_KEYS.COURSES, updated);
       return updated;
     });
-    return newCourse;
+    return { success: true, data: newCourse, localOnly: true };
   }, []);
 
   const updateCourse = useCallback(async (id: string, updates: Partial<Course>) => {
-    // Mettre à jour dans Supabase d'abord
     if (isSupabaseConfigured()) {
-      await updateCourseInDB(id, updates);
-      // Recharger depuis Supabase
-      const freshData = await fetchCourses();
-      setCourses(freshData);
-      saveToStorage(STORAGE_KEYS.COURSES, freshData);
-      return;
+      try {
+        await updateCourseInDB(id, updates);
+        const freshData = await fetchCourses();
+        setCourses(freshData);
+        saveToStorage(STORAGE_KEYS.COURSES, freshData);
+        return { success: true };
+      } catch (error) {
+        console.error('Error updating course in Supabase:', error);
+        throw error; // Propager l'erreur
+      }
     }
     
     // Fallback: mise à jour locale
@@ -169,6 +172,7 @@ export function useCourses() {
       saveToStorage(STORAGE_KEYS.COURSES, updated);
       return updated;
     });
+    return { success: true, localOnly: true };
   }, []);
 
   const removeCourse = useCallback(async (id: string) => {

@@ -50,8 +50,9 @@ export async function fetchCourses(): Promise<Course[]> {
 }
 
 export async function addCourseToDB(course: Omit<Course, 'id'> & { id?: string }) {
-  if (!supabase) return null;
+  if (!supabase) throw new Error('Supabase non configuré');
   
+  // Champs obligatoires uniquement
   const courseData: Record<string, unknown> = {
     type: course.type,
     title: course.title,
@@ -59,15 +60,19 @@ export async function addCourseToDB(course: Omit<Course, 'id'> & { id?: string }
     level: course.level,
     date: course.date,
     description: course.description,
-    content: course.content,
-    image: course.image || '',
-    imagecredits: course.imageCredits || '',
-    categorycolor: course.categoryColor,
-    categorytextcolor: course.categoryTextColor
+    content: course.content
   };
+  
+  // Champs optionnels - n'envoyer que si définis et non vides
+  if (course.image && course.image.trim() !== '') courseData.image = course.image;
+  if (course.imageCredits && course.imageCredits.trim() !== '') courseData.imagecredits = course.imageCredits;
+  if (course.categoryColor && course.categoryColor.trim() !== '') courseData.categorycolor = course.categoryColor;
+  if (course.categoryTextColor && course.categoryTextColor.trim() !== '') courseData.categorytextcolor = course.categoryTextColor;
   
   if (course.id) courseData.id = course.id;
   
+  console.log('Adding course:', courseData);
+
   const { data, error } = await supabase
     .from('courses')
     .upsert([courseData])
@@ -75,15 +80,15 @@ export async function addCourseToDB(course: Omit<Course, 'id'> & { id?: string }
     .single();
   
   if (error) {
-    console.error('Error adding course:', error.message);
-    return null;
+    console.error('Error adding course:', error);
+    throw new Error(`Supabase: ${error.message} (code: ${error.code})`);
   }
   
   return data;
 }
 
 export async function updateCourseInDB(id: string, updates: Partial<Course>) {
-  if (!supabase) return null;
+  if (!supabase) throw new Error('Supabase non configuré');
   
   // Mapper les champs camelCase vers snake_case pour Supabase
   const updateData: any = {};
@@ -95,10 +100,14 @@ export async function updateCourseInDB(id: string, updates: Partial<Course>) {
   if (updates.date !== undefined) updateData.date = updates.date;
   if (updates.description !== undefined) updateData.description = updates.description;
   if (updates.content !== undefined) updateData.content = updates.content;
-  if (updates.image !== undefined) updateData.image = updates.image;
-  if (updates.imageCredits !== undefined) updateData.imagecredits = updates.imageCredits;
-  if (updates.categoryColor !== undefined) updateData.categorycolor = updates.categoryColor;
-  if (updates.categoryTextColor !== undefined) updateData.categorytextcolor = updates.categoryTextColor;
+  
+  // Champs optionnels - n'envoyer que si définis et non vides
+  if (updates.image !== undefined && updates.image && updates.image.trim() !== '') updateData.image = updates.image;
+  if (updates.imageCredits !== undefined && updates.imageCredits && updates.imageCredits.trim() !== '') updateData.imagecredits = updates.imageCredits;
+  if (updates.categoryColor !== undefined && updates.categoryColor && updates.categoryColor.trim() !== '') updateData.categorycolor = updates.categoryColor;
+  if (updates.categoryTextColor !== undefined && updates.categoryTextColor && updates.categoryTextColor.trim() !== '') updateData.categorytextcolor = updates.categoryTextColor;
+
+  console.log('Updating course:', id, updateData);
 
   const { data, error } = await supabase
     .from('courses')
@@ -108,9 +117,8 @@ export async function updateCourseInDB(id: string, updates: Partial<Course>) {
     .single();
   
   if (error) {
-    console.error('Error updating course:', error.message);
-    console.error('Update data:', updateData);
-    return null;
+    console.error('Error updating course:', error);
+    throw new Error(`Supabase: ${error.message} (code: ${error.code})`);
   }
   return data;
 }
