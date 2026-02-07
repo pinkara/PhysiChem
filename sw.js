@@ -1,11 +1,33 @@
-// Service Worker pour MathUnivers PWA
-const CACHE_NAME = 'mathunivers-v1';
+// Service Worker pour PhysiChem PWA
+const CACHE_NAME = 'physichem-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/favicon.svg',
   '/manifest.json'
 ];
+
+// Vérifier si une requête est valide pour le cache
+function isCacheableRequest(request) {
+  const url = new URL(request.url);
+  
+  // Ignorer les requêtes non-HTTP(S)
+  if (!url.protocol.startsWith('http')) {
+    return false;
+  }
+  
+  // Ignorer les requêtes Supabase
+  if (url.hostname.includes('supabase.co')) {
+    return false;
+  }
+  
+  // Ignorer les méthodes autres que GET
+  if (request.method !== 'GET') {
+    return false;
+  }
+  
+  return true;
+}
 
 // Installation du service worker
 self.addEventListener('install', (event) => {
@@ -38,8 +60,8 @@ self.addEventListener('activate', (event) => {
 
 // Stratégie de cache : Network First, puis Cache
 self.addEventListener('fetch', (event) => {
-  // Ne pas intercepter les requêtes API Supabase
-  if (event.request.url.includes('supabase.co')) {
+  // Ignorer immédiatement les requêtes non valides
+  if (!isCacheableRequest(event.request)) {
     return;
   }
 
@@ -50,7 +72,13 @@ self.addEventListener('fetch', (event) => {
         if (response.status === 200) {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
+            // Double vérification avant de mettre en cache
+            if (isCacheableRequest(event.request)) {
+              cache.put(event.request, responseClone).catch((err) => {
+                // Ignorer silencieusement les erreurs de cache
+                console.log('[SW] Cache put skipped:', err.message);
+              });
+            }
           });
         }
         return response;
