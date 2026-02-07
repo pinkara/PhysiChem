@@ -16,11 +16,22 @@ import {
   Users,
   Eye,
   BarChart3,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { LevelBadge, DifficultyBadge } from '@/components/LevelBadge';
 import { TitleWithFormula } from '@/components/InlineFormula';
@@ -119,6 +130,60 @@ function StatsPanel({
   books: Book[];
   monthlyStats: MonthlyStats[];
 }) {
+  const [cleaning, setCleaning] = useState(false);
+
+  const clearLocalStorage = () => {
+    if (confirm('⚠️ Cette action va supprimer toutes les données locales (pas celles sur Supabase). Continuer ?')) {
+      localStorage.clear();
+      alert('✅ LocalStorage vidé ! Rechargez la page.');
+      location.reload();
+    }
+  };
+
+  const cleanBlobImages = () => {
+    setCleaning(true);
+    const keys = ['physichem_courses', 'physichem_problems', 'physichem_books'];
+    let cleaned = 0;
+    
+    keys.forEach(key => {
+      const data = localStorage.getItem(key);
+      if (data) {
+        try {
+          const parsed = JSON.parse(data);
+          if (Array.isArray(parsed)) {
+            const cleanedData = parsed.map((item: any) => {
+              let changed = false;
+              if (item.image?.startsWith('blob:')) {
+                item.image = '';
+                changed = true;
+              }
+              if (item.pdfUrl?.startsWith('blob:')) {
+                item.pdfUrl = '';
+                changed = true;
+              }
+              if (item.coverImage?.startsWith('blob:')) {
+                item.coverImage = '';
+                changed = true;
+              }
+              if (changed) cleaned++;
+              return item;
+            });
+            localStorage.setItem(key, JSON.stringify(cleanedData));
+          }
+        } catch (e) {
+          console.error('Error cleaning', key, e);
+        }
+      }
+    });
+    
+    setCleaning(false);
+    alert(`✅ ${cleaned} images blob nettoyées ! Rechargez la page.`);
+    location.reload();
+  };
+  
+  const openClearCacheTool = () => {
+    window.open('/clear-cache.html', '_blank');
+  };
   const totalVisits = monthlyStats.reduce((sum, s) => sum + s.visits, 0);
   const currentMonth = monthlyStats[monthlyStats.length - 1];
 
@@ -227,6 +292,41 @@ function StatsPanel({
           </div>
         )}
       </div>
+
+      {/* Outils de maintenance */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <LogOut className="w-5 h-5" />
+          Maintenance
+        </h3>
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            variant="outline" 
+            onClick={cleanBlobImages}
+            disabled={cleaning}
+            className="text-amber-600 border-amber-300 hover:bg-amber-50"
+          >
+            {cleaning ? 'Nettoyage...' : '🧹 Nettoyer images blob'}
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={clearLocalStorage}
+            className="text-red-600 border-red-300 hover:bg-red-50"
+          >
+            🗑️ Vider le cache local
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={openClearCacheTool}
+            className="text-blue-600 border-blue-300 hover:bg-blue-50"
+          >
+            🔧 Outil avancé
+          </Button>
+        </div>
+        <p className="text-xs text-gray-500 mt-3">
+          Ces actions n'affectent pas les données sur Supabase, uniquement le cache de ce navigateur.
+        </p>
+      </div>
     </div>
   );
 }
@@ -245,6 +345,8 @@ function CoursesManager({
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState<{
@@ -493,7 +595,10 @@ function CoursesManager({
                   <Edit2 className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => onRemove(course.id)}
+                  onClick={() => {
+                    setCourseToDelete(course);
+                    setDeleteDialogOpen(true);
+                  }}
                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -503,6 +608,39 @@ function CoursesManager({
           </div>
         ))}
       </div>
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              Confirmer la suppression
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer le cours <strong>"{courseToDelete?.title}"</strong> ?
+              <br />
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setCourseToDelete(null)}>
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (courseToDelete) {
+                  onRemove(courseToDelete.id);
+                  setCourseToDelete(null);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -521,6 +659,8 @@ function ProblemsManager({
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [problemToDelete, setProblemToDelete] = useState<Problem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -886,7 +1026,10 @@ function ProblemsManager({
                   <Edit2 className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => onRemove(problem.id)}
+                  onClick={() => {
+                    setProblemToDelete(problem);
+                    setDeleteDialogOpen(true);
+                  }}
                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -896,6 +1039,39 @@ function ProblemsManager({
           </div>
         ))}
       </div>
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              Confirmer la suppression
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer le problème <strong>"{problemToDelete?.title}"</strong> ?
+              <br />
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setProblemToDelete(null)}>
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (problemToDelete) {
+                  onRemove(problemToDelete.id);
+                  setProblemToDelete(null);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -914,6 +1090,8 @@ function FormulasManager({
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [formulaToDelete, setFormulaToDelete] = useState<Formula | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -1083,7 +1261,10 @@ function FormulasManager({
                   <Edit2 className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => onRemove(formula.id)}
+                  onClick={() => {
+                    setFormulaToDelete(formula);
+                    setDeleteDialogOpen(true);
+                  }}
                   className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -1093,6 +1274,39 @@ function FormulasManager({
           </div>
         ))}
       </div>
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              Confirmer la suppression
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer la formule <strong>"{formulaToDelete?.name}"</strong> ?
+              <br />
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setFormulaToDelete(null)}>
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (formulaToDelete) {
+                  onRemove(formulaToDelete.id);
+                  setFormulaToDelete(null);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

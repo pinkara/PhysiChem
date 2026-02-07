@@ -10,10 +10,21 @@ import {
   BookOpen,
   Trash2,
   AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { cn } from "@/lib/utils";
 import { LevelBadge } from "@/components/LevelBadge";
@@ -120,11 +131,11 @@ interface LibraryPageProps {
 function BookCard({ 
   book, 
   isAdmin, 
-  onRemoveBook 
+  onDeleteClick 
 }: { 
   book: Book; 
   isAdmin: boolean; 
-  onRemoveBook: (id: string) => void;
+  onDeleteClick: (book: Book) => void;
 }) {
   const { url: pdfUrl, isLocal: isPdfLocal } = usePDFUrl(book.pdfUrl);
   const [coverObjectUrl, setCoverObjectUrl] = useState<string | null>(null);
@@ -174,7 +185,7 @@ function BookCard({
         )}
         {isAdmin && (
           <button
-            onClick={() => onRemoveBook(book.id)}
+            onClick={() => onDeleteClick(book)}
             className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
           >
             <Trash2 className="w-4 h-4" />
@@ -263,6 +274,8 @@ export function LibraryPage({
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
@@ -693,7 +706,10 @@ export function LibraryPage({
               key={book.id} 
               book={book} 
               isAdmin={isAdmin} 
-              onRemoveBook={onRemoveBook}
+              onDeleteClick={(book) => {
+                setBookToDelete(book);
+                setDeleteDialogOpen(true);
+              }}
             />
           ))}
         </div>
@@ -719,6 +735,39 @@ export function LibraryPage({
           )}
         </div>
       )}
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              Confirmer la suppression
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer le livre <strong>"{bookToDelete?.title}"</strong> ?
+              <br />
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setBookToDelete(null)}>
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (bookToDelete) {
+                  onRemoveBook(bookToDelete.id);
+                  setBookToDelete(null);
+                }
+              }}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

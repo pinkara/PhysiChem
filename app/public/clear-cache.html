@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clear Cache - PhysiChem</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; max-width: 600px; margin: 0 auto; }
+    button { padding: 15px 30px; margin: 10px; font-size: 16px; cursor: pointer; }
+    .danger { background: #ff4444; color: white; border: none; border-radius: 8px; }
+    .success { background: #44ff44; color: black; border: none; border-radius: 8px; }
+    .info { background: #4444ff; color: white; border: none; border-radius: 8px; }
+    pre { background: #f5f5f5; padding: 15px; border-radius: 8px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔧 Outil de nettoyage PhysiChem</h1>
+  
+  <h2>1. Nettoyer les images blob cassées</h2>
+  <button class="danger" onclick="cleanBlobImages()">🧹 Nettoyer images blob</button>
+  
+  <h2>2. Vider tout le cache</h2>
+  <button class="danger" onclick="clearAll()">🗑️ Vider tout le cache</button>
+  
+  <h2>3. Voir les données stockées</h2>
+  <button class="info" onclick="showData()">👀 Voir les données</button>
+  
+  <pre id="output"></pre>
+  
+  <p><a href="/">← Retour à l'app</a></p>
+
+  <script>
+    const output = document.getElementById('output');
+    
+    function log(msg) {
+      output.textContent += msg + '\n';
+    }
+    
+    function cleanBlobImages() {
+      output.textContent = '';
+      log('🧹 Nettoyage des images blob...\n');
+      
+      const keys = ['physichem_courses', 'physichem_problems', 'physichem_books'];
+      let cleaned = 0;
+      
+      keys.forEach(key => {
+        const data = localStorage.getItem(key);
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) {
+              const cleanedData = parsed.map(item => {
+                let changed = false;
+                if (item.image?.startsWith('blob:')) {
+                  item.image = '';
+                  changed = true;
+                  log(`✅ ${key}: image blob nettoyée`);
+                }
+                if (item.pdfUrl?.startsWith('blob:')) {
+                  item.pdfUrl = '';
+                  changed = true;
+                  log(`✅ ${key}: pdfUrl blob nettoyée`);
+                }
+                if (item.coverImage?.startsWith('blob:')) {
+                  item.coverImage = '';
+                  changed = true;
+                  log(`✅ ${key}: coverImage blob nettoyée`);
+                }
+                if (changed) cleaned++;
+                return item;
+              });
+              localStorage.setItem(key, JSON.stringify(cleanedData));
+            }
+          } catch (e) {
+            log(`❌ Erreur avec ${key}: ${e.message}`);
+          }
+        }
+      });
+      
+      log(`\n✨ ${cleaned} éléments nettoyés !`);
+      log('Rechargez la page pour voir les changements.');
+    }
+    
+    function clearAll() {
+      if (confirm('⚠️ Tout le cache sera supprimé. Continuer ?')) {
+        localStorage.clear();
+        output.textContent = '✅ Cache vidé !\nRechargez la page.';
+      }
+    }
+    
+    function showData() {
+      output.textContent = '';
+      log('📦 Données dans localStorage:\n');
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+        log(`\n🔑 ${key}:`);
+        try {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed)) {
+            log(`   ${parsed.length} éléments`);
+            parsed.forEach((item, idx) => {
+              if (item.image) log(`   [${idx}] image: ${item.image.substring(0, 50)}...`);
+              if (item.title) log(`   [${idx}] title: ${item.title}`);
+            });
+          } else {
+            log(`   ${JSON.stringify(parsed).substring(0, 100)}...`);
+          }
+        } catch {
+          log(`   ${value.substring(0, 100)}...`);
+        }
+      }
+    }
+  </script>
+</body>
+</html>

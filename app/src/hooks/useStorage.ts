@@ -358,32 +358,19 @@ export function useFormulas() {
   }, []);
 
   const updateFormula = useCallback(async (id: string, updates: Partial<Formula>) => {
-    // Mise à jour optimiste locale d'abord
+    if (isSupabaseConfigured()) {
+      await updateFormulaInDB(id, updates);
+      const freshData = await fetchFormulas();
+      setFormulas(freshData);
+      saveToStorage(STORAGE_KEYS.FORMULAS, freshData);
+      return;
+    }
+    
     setFormulas(prev => {
       const updated = prev.map(f => f.id === id ? { ...f, ...updates } : f);
       saveToStorage(STORAGE_KEYS.FORMULAS, updated);
       return updated;
     });
-    
-    if (isSupabaseConfigured()) {
-      try {
-        const result = await updateFormulaInDB(id, updates);
-        if (result) {
-          // Si la mise à jour a réussi, rafraîchir les données
-          const freshData = await fetchFormulas();
-          setFormulas(freshData);
-          saveToStorage(STORAGE_KEYS.FORMULAS, freshData);
-        } else {
-          console.error('Failed to update formula in database');
-          // L'état local reste car la mise à jour optimiste est déjà faite
-          // On pourrait afficher une notification d'erreur ici
-        }
-      } catch (error) {
-        console.error('Error updating formula:', error);
-        // En cas d'erreur, on garde la mise à jour locale
-        // L'utilisateur peut réessayer
-      }
-    }
   }, []);
 
   const removeFormula = useCallback(async (id: string) => {
