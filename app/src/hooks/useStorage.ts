@@ -1,6 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Course, Problem, Formula, Book, MonthlyStats } from '@/types';
 import { deleteFileLocal } from '@/lib/fileStorage';
+
+// === FONCTION UTILITAIRE POUR GÉNÉRER DES UUIDs ===
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 import {
   supabase,
   fetchCourses,
@@ -121,7 +130,7 @@ export function useCourses() {
   const addCourse = useCallback(async (course: Omit<Course, 'id' | 'type' | 'date'>) => {
     const newCourse: Course = {
       ...course,
-      id: `c${Date.now()}`,
+      id: generateUUID(),
       type: 'course',
       date: new Date().toISOString().split('T')[0],
       image: course.image || '',
@@ -237,7 +246,7 @@ export function useProblems() {
   const addProblem = useCallback(async (problem: Omit<Problem, 'id' | 'type' | 'date'>) => {
     const newProblem: Problem = {
       ...problem,
-      id: `p${Date.now()}`,
+      id: generateUUID(),
       type: 'problem',
       date: new Date().toISOString().split('T')[0],
       // Assurer que les champs optionnels ne sont pas undefined
@@ -340,7 +349,7 @@ export function useFormulas() {
   const addFormula = useCallback(async (formula: Omit<Formula, 'id'>) => {
     const newFormula: Formula = {
       ...formula,
-      id: `f${Date.now()}`,
+      id: generateUUID(),
     };
     
     if (isSupabaseConfigured()) {
@@ -462,7 +471,7 @@ export function useLibrary() {
     console.debug('useLibrary.addBook called with:', book);
     const newBook: Book = {
       ...book,
-      id: `b${Date.now()}`,
+      id: generateUUID(),
       uploadDate: new Date().toISOString().split('T')[0],
       // Assurer que les champs optionnels ne sont pas undefined
       description: book.description || '',

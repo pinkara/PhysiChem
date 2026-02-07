@@ -40,14 +40,14 @@ function useMathJax() {
     // Configure MathJax before loading
     (window as any).MathJax = {
       loader: {
-        load: ['[tex]/color']
+        load: ['[tex]/color', '[tex]/mhchem']
       },
       tex: {
         inlineMath: [['$', '$'], ['\\(', '\\)']],
         displayMath: [['$$', '$$'], ['\\[', '\\]']],
         processEscapes: true,
         processEnvironments: true,
-        packages: {'[+]': ['color']}
+        packages: {'[+]': ['color', 'mhchem']}
       },
       svg: {
         fontCache: 'global',

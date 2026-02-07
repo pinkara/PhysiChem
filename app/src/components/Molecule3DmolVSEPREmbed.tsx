@@ -308,6 +308,128 @@ const MOLECULES: Record<string, MoleculeConfig> = {
   }
 };
 
+const JMOL_COLORS = {
+  H: 0xFFFFFF,   // Blanc
+  He: 0xD9FFFF,  // Bleu très clair
+  Li: 0xCC80FF,  // Violet clair
+  Be: 0xC2FF00,  // Vert chartreuse
+  B: 0xFFB5B5,   // Rose clair
+  C: 0x909090,   // Gris
+  N: 0x3050F8,   // Bleu
+  O: 0xFF0D0D,   // Rouge
+  F: 0x90E050,   // Vert clair
+  Ne: 0xB3E3F5,  // Bleu glacé
+  Na: 0xAB5CF2,  // Violet
+  Mg: 0x8AFF00,  // Vert vif
+  Al: 0xBFA6A6,  // Gris rosé
+  Si: 0xF0C8A0,  // Beige
+  P: 0xFF8000,   // Orange
+  S: 0xFFFF30,   // Jaune
+  Cl: 0x1FF01F,  // Vert
+  Ar: 0x80D1E3,  // Bleu turquoise clair
+  K: 0x8F40D4,   // Violet foncé
+  Ca: 0x3DFF00,  // Vert vif
+  Sc: 0xE6E6E6,  // Gris clair
+  Ti: 0xBFC2C7,  // Gris argenté
+  V: 0xA6A6AB,   // Gris foncé
+  Cr: 0x8A99C7,  // Bleu gris
+  Mn: 0x9C7AC7,  // Violet clair
+  Fe: 0xE06633,  // Orange/Rouille
+  Co: 0xF090A0,  // Rose
+  Ni: 0x50D050,  // Vert
+  Cu: 0xC88033,  // Brun
+  Zn: 0x7D80B0,  // Bleu gris
+  Ga: 0xC28F8F,  // Brun rosé
+  Ge: 0x668F8F,  // Vert bleuâtre
+  As: 0xBD80E3,  // Lavande
+  Se: 0xFFA100,  // Orange
+  Br: 0xA62929,  // Brun/rouge foncé
+  Kr: 0x5CB8D1,  // Bleu turquoise
+  Rb: 0x702EB0,  // Violet
+  Sr: 0x00FF00,  // Vert
+  Y: 0x94FFFF,   // Cyan clair
+  Zr: 0x94E0E0,  // Turquoise
+  Nb: 0x73C2C9,  // Bleu vert
+  Mo: 0x54B5B5,  // Vert bleuâtre
+  Tc: 0x3B9E9E,  // Vert de mer
+  Ru: 0x248F8F,  // Cyan foncé
+  Rh: 0x0A7D8C,  // Bleu cyan
+  Pd: 0x006985,  // Bleu outremer
+  Ag: 0xC0C0C0,  // Argent
+  Cd: 0xFFD98F,  // Jaune doré
+  In: 0xA67573,  // Gris rougeâtre
+  Sn: 0x668080,  // Gris bleu-vert
+  Sb: 0x9E63B5,  // Violet
+  Te: 0xD47A00,  // Orange foncé
+  I: 0x940094,   // Violet
+  Xe: 0x429EB0,  // Bleu gris
+  Cs: 0x57178F,  // Indigo
+  Ba: 0x00C900,  // Vert
+  La: 0x70D4FF,  // Bleu ciel
+  Ce: 0xFFFFC7,  // Jaune très clair
+  Pr: 0xD9FFC7,  // Vert pâle
+  Nd: 0xC7FFC7,  // Vert menthe
+  Pm: 0xA3FFC7,  // Vert printemps
+  Sm: 0x8FFFC7,  // Vert aquatique
+  Eu: 0x61FFC7,  // Vert menthe clair
+  Gd: 0x45FFC7,  // Vert cyan
+  Tb: 0x30FFC7,  // Vert turquoise
+  Dy: 0x1FFFC7,  // Vert émeraude clair
+  Ho: 0x00FF9C,  // Vert menthe foncé
+  Er: 0x00E675,  // Vert
+  Tm: 0x00D452,  // Vert
+  Yb: 0x00BF38,  // Vert
+  Lu: 0x00AB24,  // Vert
+  Hf: 0x4DC2FF,  // Bleu clair
+  Ta: 0x4DA6FF,  // Bleu
+  W: 0x2194D6,   // Bleu
+  Re: 0x267DAB,  // Bleu gris
+  Os: 0x266696,  // Bleu foncé
+  Ir: 0x175487,  // Bleu marine
+  Pt: 0xD0D0E0,  // Gris bleu pâle
+  Au: 0xFFD123,  // Or
+  Hg: 0xB8B8D0,  // Gris bleu
+  Tl: 0xA6544D,  // Gris rougeâtre
+  Pb: 0x575961,  // Gris foncé
+  Bi: 0x9E4FB5,  // Violet
+  Po: 0xAB5C00,  // Orange
+  At: 0x754F45,  // Brun
+  Rn: 0x428296,  // Gris bleu
+  Fr: 0x420066,  // Violet très foncé
+  Ra: 0x007D00,  // Vert
+  Ac: 0x70ABFA,  // Bleu clair
+  Th: 0x00BAFF,  // Cyan
+  Pa: 0x00A1FF,  // Bleu
+  U: 0x008FFF,   // Bleu
+  Np: 0x0080FF,  // Bleu
+  Pu: 0x006BFF,  // Bleu
+  Am: 0x545CF2,  // Bleu violet
+  Cm: 0x785CE3,  // Violet
+  Bk: 0x8A4FE3,  // Violet
+  Cf: 0xA136D4,  // Violet
+  Es: 0xB31FD4,  // Violet
+  Fm: 0xB31FBA,  // Rose violet
+  Md: 0xB30DA6,  // Rose violet foncé
+  No: 0xBD0D87,  // Rose
+  Lr: 0xC70066,  // Rose foncé
+  Rf: 0xCC0059,  // Rose rougeâtre
+  Db: 0xD1004F,  // Rouge rosé
+  Sg: 0xD90045,  // Rouge
+  Bh: 0xE00038,  // Rouge vif
+  Hs: 0xE6002E,  // Rouge
+  Mt: 0xEB0026,  // Rouge
+  // Éléments 110-118 (complétés depuis une autre source Jmol officielle)
+  Ds: 0xB31FBA,  // Similaire à Fm (Rose violet)
+  Rg: 0xB30DA6,  // Similaire à Md (Rose violet foncé)
+  Cn: 0xBD0D87,  // Similaire à No (Rose)
+  Nh: 0xC70066,  // Similaire à Lr (Rose foncé)
+  Fl: 0xCC0059,  // Similaire à Rf (Rose rougeâtre)
+  Mc: 0xD1004F,  // Similaire à Db (Rouge rosé)
+  Lv: 0xD90045,  // Similaire à Sg (Rouge)
+  Ts: 0xE00038,  // Similaire à Bh (Rouge vif)
+  Og: 0xE6002E,  // Similaire à Hs (Rouge)
+};
+
 // --- UTILITAIRES ---
 
 const generateMOL = (config: MoleculeConfig): string => {
@@ -678,7 +800,7 @@ export function Molecule3DmolVSEPREmbed({
             if (!viewerRef.current) {
                 const viewer = $3Dmol.createViewer(containerRef.current, {
                     backgroundColor: 'white',
-                    defaultcolors: $3Dmol.rasmolElementColors,
+                    defaultcolors: JMOL_COLORS,
                 });
                 viewerRef.current = viewer;
             }

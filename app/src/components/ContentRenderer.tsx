@@ -757,9 +757,13 @@ export function ContentRenderer({ content, className = '' }: ContentRendererProp
       script.id = 'mathjax-script';
       
       (window as any).MathJax = {
+        loader: {
+          load: ['[tex]/mhchem']
+        },
         tex: {
           inlineMath: [['$', '$'], ['\\(', '\\)']],
           displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          packages: {'[+]': ['mhchem']}
         },
         svg: {
           fontCache: 'global',

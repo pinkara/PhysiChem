@@ -4,7 +4,7 @@ Encyclopédie de chimie et physique avec cours, problèmes, formules, librairie 
 
 ## 🌐 Site en ligne
 
-Accédez au site ici : **https://pinkara.github.io/physichem/**
+Accédez au site ici : **https://pinkara.github.io/PhysiChem/**
 
 ## ✨ Fonctionnalités
 

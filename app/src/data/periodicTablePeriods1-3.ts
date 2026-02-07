@@ -98,13 +98,13 @@ export const elements: ElementInput[] = [
     ],
     images: {
       material: { 
-        url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Hydrogen_discharge_tube.jpg/640px-Hydrogen_discharge_tube.jpg',
+        url: 'https://upload.wikimedia.org/wikipedia/commons/a/af/N%C3%A9ons.JPG',
         alt: 'Tube à décharge contenant de l\'hydrogène luminescent',
-        credit: 'Jurii / CC BY'
+        credit: 'Rogilbert~commonswiki'
       },
       everyday: [
-        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Space_Shuttle_Main_Engine.jpg/640px-Space_Shuttle_Main_Engine.jpg', alt: 'Moteur de navette spatiale utilisant l\'hydrogène', credit: 'NASA' },
-        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Hydrogen_fueling.jpg/640px-Hydrogen_fueling.jpg', alt: 'Station de remplissage d\'hydrogène', credit: 'NREL' }
+        { url: 'https://trustmyscience.com/wp-content/uploads/2018/12/bepicolombo-mission-mercure-vaisseau-propulseur-ionique-plus-puissant-du-monde.jpg', alt: 'Moteur de navette spatiale utilisant l\'hydrogène', credit: 'NASA' },
+        { url: 'https://www.h2-mobile.fr/img/post-h2/atawey-station-hydrogene_180221.jpg', alt: 'Station de remplissage d\'hydrogène', credit: 'NREL' }
       ]
     }
   },
@@ -219,13 +219,13 @@ export const elements: ElementInput[] = [
     ],
     images: {
       material: { 
-        url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Graphite_01.jpg/640px-Graphite_01.jpg',
+        url: 'https://upload.wikimedia.org/wikipedia/commons/9/94/Min_graphite.jpg',
         alt: 'Bloc de graphite naturel',
         credit: 'Fluka / CC BY-SA'
       },
       everyday: [
-        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Brilliant_Diamond.jpg/640px-Brilliant_Diamond.jpg', alt: 'Diamant taillé', credit: 'Mario Sarto / CC BY-SA' },
-        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Pencil_lead.jpg/640px-Pencil_lead.jpg', alt: 'Mine de crayon en graphite', credit: 'Nevit Dilmen / CC BY-SA' }
+        { url: 'https://www.i-diamants.com/medias_upload/moxie/wysiwyg/diamant-taille-ancienne.jpg', alt: 'Diamant taillé', credit: 'Mario Sarto / CC BY-SA' },
+        { url: 'https://assets.pyc.fr/uploads/media/image/0001/57/d76afbbe3edbeb21014b88ab7a254ea98fe8cc77.jpeg', alt: 'Mine de crayon en graphite', credit: 'Nevit Dilmen / CC BY-SA' }
       ]
     }
   },
@@ -391,13 +391,13 @@ export const elements: ElementInput[] = [
     isotopes: [{ massNumber: 27, naturalAbundance: 100, decayMode: 'stable' }],
     images: {
       material: {
-        url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Aluminium-4.jpg/640px-Aluminium-4.jpg',
+        url: 'https://themetalsfactory.com/wp-content/uploads/2023/03/Aluminium-Blocks-Manufacturers-Dealers-Factory.jpg',
         alt: 'Blocs d\'aluminium',
         credit: 'Jurii / CC BY'
       },
       everyday: [
-        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Drink_Cans.jpg/640px-Drink_Cans.jpg', alt: 'Canettes de soda en aluminium', credit: 'CC0' },
-        { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Aluminium_foil.jpg/640px-Aluminium_foil.jpg', alt: 'Papier d\'aluminium', credit: 'Wdwd / CC BY-SA' }
+        { url: 'https://beymedias.brightspotcdn.com/dims4/default/018e7a4/2147483647/strip/true/crop/3888x2027+0+278/resize/840x438!/quality/90/?url=http%3A%2F%2Fl-opinion-brightspot.s3.amazonaws.com%2Fd0%2F52%2F74920085657dc60dff3feda256d1%2Falu.jpg', alt: 'Canettes de soda en aluminium', credit: 'CC0' },
+        { url: 'https://www.datocms-assets.com/10385/1552422115-aluminium-1.jpg', alt: 'Papier d\'aluminium', credit: 'Wdwd / CC BY-SA' }
       ]
     }
   },
