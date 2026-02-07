@@ -3741,7 +3741,7 @@ export function Molecule3DmolVSEPREmbed({
       
       const vertices = [...atoms];
       if (showLonePairs && config.lonePairs) {
-        config.lonePairs.forEach(lp => vertices.push(lp));
+        config.lonePairs.forEach(lp => vertices.push({ elem: 'X', ...lp }));
       }
       
       if (vertices.length >= 3) {

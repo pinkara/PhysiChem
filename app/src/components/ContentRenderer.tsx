@@ -407,6 +407,10 @@ type ContentPart =
   | { type: 'molecule3Dmol'; formula: string; title?: string; height?: string; credits?: string }
   | { type: 'molecule3DmolEmbed'; formula: string; height?: string; credits?: string }
   | { type: 'molecule3DmolNative'; formula: string; height?: string; credits?: string }
+  | { type: 'moleculeJSmolVSEPR'; formula: string; title?: string; height?: string; credits?: string }
+  | { type: 'molecule3DmolVSEPR'; formula: string; title?: string; height?: string; credits?: string }
+  | { type: 'molecule3DmolVSEPREmbed'; formula: string; height?: string; credits?: string; controls?: boolean }
+  | { type: 'molecule3DmolVSEPRSimple'; formula: string; height?: string; credits?: string }
   | { type: 'glossary'; term: string; definition: string; content?: string };
 
 function parseContent(content: string): ContentPart[] {
@@ -676,7 +680,6 @@ function parseContent(content: string): ContentPart[] {
           title: match[2],
           height: match[3],
           credits: match[4],
-          source: match[5],
         });
         break;
       }
@@ -987,7 +990,6 @@ export function ContentRenderer({ content, className = '' }: ContentRendererProp
                 title={part.title}
                 height={part.height}
                 credits={part.credits}
-                source={part.source as any}
               />
             );
           case 'molecule3DmolVSEPR':
