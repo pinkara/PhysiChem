@@ -271,5 +271,5 @@ export const initialBooks: Book[] = [
 export function initializeData() {
   // Les données sont maintenant gérées par les hooks useStorage
   // qui chargent depuis Supabase (ou localStorage comme fallback)
-  console.log('MathUnivers: Data will be loaded from Supabase or local cache');
+  console.log('PhysiChem: Data will be loaded from Supabase or local cache');
 }

@@ -1,4 +1,4 @@
-// === TYPES MATHUNIVERS ===
+// === TYPES PHYSICHEM ===
 
 // Niveaux scolaires avec leurs couleurs associées
 export type Level = 
@@ -139,6 +139,7 @@ export type Route =
   | 'library' 
   | 'ide'
   | 'subjects'
+  | 'periodic-table'
   | 'admin' 
   | 'article';
 

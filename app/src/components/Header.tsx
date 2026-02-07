@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Terminal,
   Layers,
-  ExternalLink
+  ExternalLink,
+  Atom
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,6 +42,7 @@ export function Header({ currentRoute, onNavigate, isAdmin, searchResults }: Hea
     { route: 'courses' as Route, label: 'Cours', icon: BookOpen },
     { route: 'problems' as Route, label: 'Problèmes', icon: Puzzle },
     { route: 'formulas' as Route, label: 'Formules', icon: Calculator },
+    { route: 'periodic-table' as Route, label: 'Tableau Périodique', icon: Atom },
     { route: 'library' as Route, label: 'Librairie', icon: Library },
     { route: 'subjects' as Route, label: 'Matières', icon: Layers },
     { route: 'ide' as Route, label: 'IDE', icon: Terminal },
@@ -86,11 +88,11 @@ export function Header({ currentRoute, onNavigate, isAdmin, searchResults }: Hea
             onClick={() => onNavigate('home')}
             className="flex items-center gap-2 group"
           >
-            <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white p-2 rounded-lg group-hover:scale-105 transition-transform">
+            <div className="bg-gradient-to-br from-purple-600 to-pink-600 text-white p-2 rounded-lg group-hover:scale-105 transition-transform">
               <GraduationCap className="w-5 h-5" />
             </div>
             <span className="font-bold text-xl text-gray-900 tracking-tight">
-              MathUnivers
+              PhysiChem
             </span>
           </button>
 

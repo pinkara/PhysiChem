@@ -20,7 +20,12 @@ export const supabase = isValidConfig ? createClient(SUPABASE_URL, SUPABASE_ANON
   global: {
     headers: {
       'apikey': SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
+  },
+  db: {
+    schema: 'public',
   },
 }) : null;
 
@@ -100,19 +105,27 @@ export async function updateCourseInDB(id: string, updates: Partial<Course>) {
   if (updates.categoryColor !== undefined) updateData.categorycolor = updates.categoryColor;
   if (updates.categoryTextColor !== undefined) updateData.categorytextcolor = updates.categoryTextColor;
 
-  const { data, error } = await supabase
+  // Récupérer le cours existant d'abord
+  const { data: existingData } = await supabase
+    .from('courses')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  // Faire la mise à jour sans .select() pour éviter l'erreur 406
+  const { error } = await supabase
     .from('courses')
     .update(updateData)
-    .eq('id', id)
-    .select()
-    .single();
+    .eq('id', id);
   
   if (error) {
     console.error('Error updating course:', error.message);
     console.error('Update data:', updateData);
     return null;
   }
-  return data;
+  
+  // Retourner les données fusionnées
+  return { ...existingData, ...updates, id };
 }
 
 export async function deleteCourseFromDB(id: string) {
@@ -202,19 +215,27 @@ export async function updateProblemInDB(id: string, updates: Partial<Problem>) {
   if (updates.hints !== undefined) updateData.hints = updates.hints;
   if (updates.date !== undefined) updateData.date = updates.date;
 
-  const { data, error } = await supabase
+  // Récupérer le problème existant d'abord
+  const { data: existingData } = await supabase
+    .from('problems')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  // Faire la mise à jour sans .select() pour éviter l'erreur 406
+  const { error } = await supabase
     .from('problems')
     .update(updateData)
-    .eq('id', id)
-    .select()
-    .single();
+    .eq('id', id);
   
   if (error) {
     console.error('Error updating problem:', error.message);
     console.error('Update data:', updateData);
     return null;
   }
-  return data;
+  
+  // Retourner les données fusionnées
+  return { ...existingData, ...updates, id };
 }
 
 export async function deleteProblemFromDB(id: string) {
@@ -239,7 +260,12 @@ export async function fetchFormulas(): Promise<Formula[]> {
     console.error('Error fetching formulas:', error.message);
     return [];
   }
-  return data || [];
+  
+  // Normaliser les données pour s'assurer que level a une valeur par défaut
+  return (data || []).map((formula: any) => ({
+    ...formula,
+    level: formula.level || 'Term',
+  }));
 }
 
 export async function addFormulaToDB(formula: Omit<Formula, 'id'>) {
@@ -260,9 +286,27 @@ export async function addFormulaToDB(formula: Omit<Formula, 'id'>) {
 
 export async function updateFormulaInDB(id: string, updates: Partial<Formula>) {
   if (!supabase) return null;
-  const { data, error } = await supabase.from('formulas').update(updates).eq('id', id).select().single();
-  if (error) return null;
-  return data;
+  
+  // D'abord, récupérer la formule existante
+  const { data: existingData } = await supabase
+    .from('formulas')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  // Faire la mise à jour sans .select() pour éviter l'erreur 406
+  const { error } = await supabase
+    .from('formulas')
+    .update(updates)
+    .eq('id', id);
+  
+  if (error) {
+    console.error('Error updating formula:', error.message);
+    return null;
+  }
+  
+  // Retourner les données fusionnées
+  return { ...existingData, ...updates, id } as Formula;
 }
 
 export async function deleteFormulaFromDB(id: string) {

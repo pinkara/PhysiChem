@@ -21,7 +21,7 @@ const DEFAULT_CODES: Record<IDELanguage, string> = {
   python: `# Bienvenue dans l'IDE Python !
 # Écrivez votre code ici et cliquez sur "Exécuter"
 
-print("Hello, MathUnivers!")
+print("Hello, PhysiChem!")
 
 # Exemple : Calcul de factorielle
 def factorielle(n):
@@ -44,7 +44,7 @@ for i in range(10):
   javascript: `// Bienvenue dans l'IDE JavaScript !
 // Écrivez votre code ici et cliquez sur "Exécuter"
 
-console.log("Hello, MathUnivers!");
+console.log("Hello, PhysiChem!");
 
 // Exemple : Calcul de factorielle
 function factorielle(n) {
@@ -417,7 +417,7 @@ def show_plot():
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `mathunivers_code.${extension}`;
+    a.download = `physichem_code.${extension}`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -437,7 +437,7 @@ def show_plot():
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center gap-2">
             <Terminal className="w-6 h-6 text-indigo-600" />
-            IDE MathUnivers
+            IDE PhysiChem
           </h1>
           <p className="text-sm text-gray-600 mt-1">
             Éditeur et exécuteur de code Python & JavaScript

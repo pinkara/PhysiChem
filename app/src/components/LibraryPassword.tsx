@@ -3,8 +3,8 @@ import { Lock, Unlock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const LIBRARY_PASSWORD = 'matharchive314';
-const STORAGE_KEY = 'mathunivers_library_access';
+const LIBRARY_PASSWORD = 'physarchive981';
+const STORAGE_KEY = 'physichem_library_access';
 
 interface LibraryPasswordProps {
   children: React.ReactNode;
@@ -63,7 +63,7 @@ export function LibraryPassword({ children }: LibraryPasswordProps) {
               <Lock className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">
-              Librairie MathUnivers
+              Librairie PhysiChem
             </h2>
             <p className="text-purple-100">
               Cette section est protégée. Entrez le mot de passe pour accéder aux ressources.

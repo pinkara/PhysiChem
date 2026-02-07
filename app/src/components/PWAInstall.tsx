@@ -85,7 +85,7 @@ export function PWAInstall() {
               <Smartphone className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-gray-800">Installer MathUnivers</h3>
+              <h3 className="font-bold text-gray-800">Installer PhysiChem</h3>
               <p className="text-sm text-gray-600">
                 Appuyez sur <strong>Partager</strong> puis <strong>Sur l'écran d'accueil</strong>
               </p>
@@ -107,7 +107,7 @@ export function PWAInstall() {
             <Download className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="font-bold text-gray-800">Installer MathUnivers</h3>
+            <h3 className="font-bold text-gray-800">Installer PhysiChem</h3>
             <p className="text-sm text-gray-600">
               Accédez rapidement aux cours et problèmes hors connexion
             </p>

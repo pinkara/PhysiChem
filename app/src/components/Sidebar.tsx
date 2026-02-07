@@ -99,7 +99,7 @@ export function Sidebar({ courses, problems, formulas, onNavigate }: SidebarProp
           À propos
         </h3>
         <p className="text-xs md:text-sm text-gray-600 mb-4">
-          MathUnivers est une encyclopédie mathématique participative. 
+          PhysiChem est une encyclopédie physique-chimie participative. 
           Chaque jour, découvrez un nouveau problème et une nouvelle formule.
         </p>
         <div className="flex items-center gap-4 text-gray-400">

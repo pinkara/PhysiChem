@@ -27,17 +27,6 @@ interface SubjectSite {
 
 const subjects: SubjectSite[] = [
   {
-    id: 'maths',
-    name: 'MathUnivers',
-    fullName: 'Mathématiques',
-    description: 'Cours, exercices et formules de mathématiques de la 6e à la Terminale.',
-    icon: <Calculator className="w-8 h-8" />,
-    color: 'from-blue-500 to-indigo-600',
-    bgGradient: 'from-blue-50 to-indigo-100',
-    url: window.location.origin,
-    status: 'available'
-  },
-  {
     id: 'physto',
     name: 'PhysiChem',
     fullName: 'Physique-Chimie',
@@ -45,8 +34,19 @@ const subjects: SubjectSite[] = [
     icon: <FlaskConical className="w-8 h-8" />,
     color: 'from-purple-500 to-pink-600',
     bgGradient: 'from-purple-50 to-pink-100',
-    url: '#',
-    status: 'coming-soon'
+    url: window.location.origin,
+    status: 'available'
+  },
+  {
+    id: 'maths',
+    name: 'MathUnivers',
+    fullName: 'Mathématiques',
+    description: 'Cours, exercices et formules de mathématiques de la 6e à la Terminale.',
+    icon: <Calculator className="w-8 h-8" />,
+    color: 'from-blue-500 to-indigo-600',
+    bgGradient: 'from-blue-50 to-indigo-100',
+    url: 'https://pinkara.github.io/mathsite/',
+    status: 'available'
   },
   {
     id: 'es',
@@ -143,7 +143,7 @@ export function SubjectsPortal() {
       <div className="bg-white border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center p-2 sm:p-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl sm:rounded-2xl mb-2 sm:mb-4">
+            <div className="inline-flex items-center justify-center p-2 sm:p-3 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 rounded-xl sm:rounded-2xl mb-2 sm:mb-4">
               <GraduationCap className="w-7 h-7 sm:w-10 sm:h-10 text-white" />
             </div>
             <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1.5 sm:mb-3">
@@ -195,7 +195,7 @@ export function SubjectsPortal() {
         </div>
 
         {/* Info Section */}
-        <div className="mt-6 sm:mt-12 lg:mt-16 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 text-white">
+        <div className="mt-6 sm:mt-12 lg:mt-16 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 rounded-xl sm:rounded-3xl p-3.5 sm:p-6 lg:p-8 text-white">
           <div className="text-center">
             <h3 className="text-base sm:text-xl lg:text-2xl font-bold mb-1.5 sm:mb-4">
               Une plateforme unifiée pour tous les élèves

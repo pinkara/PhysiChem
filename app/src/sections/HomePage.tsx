@@ -91,19 +91,19 @@ export function HomePage({ courses, problems, formulas, isAdmin, onNavigate }: H
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-3 md:mb-4">
             <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-yellow-300" />
-            <span className="text-xs md:text-sm font-medium text-blue-100">Bienvenue sur</span>
+            <span className="text-xs md:text-sm font-medium text-purple-100">Bienvenue sur</span>
           </div>
           <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold mb-3 md:mb-4">
-            MathUnivers
+            PhysiChem
           </h1>
-          <p className="text-sm md:text-base lg:text-lg text-blue-100 max-w-2xl mb-6 md:mb-8">
-            La référence quotidienne pour les étudiants et passionnés de mathématiques. 
+          <p className="text-sm md:text-base lg:text-lg text-purple-100 max-w-2xl mb-6 md:mb-8">
+            La référence quotidienne pour les étudiants et passionnés de physique-chimie. 
             Découvrez des cours, problèmes et formules pour tous les niveaux.
           </p>
           <div className="flex flex-wrap gap-2 md:gap-3">
             <Button 
               onClick={() => onNavigate('courses')}
-              className="bg-white text-blue-600 hover:bg-blue-50 text-sm md:text-base"
+              className="bg-white text-purple-600 hover:bg-purple-50 text-sm md:text-base"
             >
               <BookOpen className="w-4 h-4 mr-2" />
               Explorer les cours

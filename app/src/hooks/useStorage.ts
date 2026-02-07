@@ -24,15 +24,15 @@ import {
 
 // === CLÉS DE STOCKAGE LOCAL (CACHE) ===
 const STORAGE_KEYS = {
-  COURSES: 'mathunivers_courses',
-  PROBLEMS: 'mathunivers_problems',
-  FORMULAS: 'mathunivers_formulas',
-  BOOKS: 'mathunivers_books',
-  VIEWS: 'mathunivers_views',
-  MONTHLY_STATS: 'mathunivers_monthly_stats',
-  ADMIN_SESSION: 'mathunivers_admin',
-  LIKES: 'mathunivers_likes',
-  VOTES: 'mathunivers_votes',
+  COURSES: 'physichem_courses',
+  PROBLEMS: 'physichem_problems',
+  FORMULAS: 'physichem_formulas',
+  BOOKS: 'physichem_books',
+  VIEWS: 'physichem_views',
+  MONTHLY_STATS: 'physichem_monthly_stats',
+  ADMIN_SESSION: 'physichem_admin',
+  LIKES: 'physichem_likes',
+  VOTES: 'physichem_votes',
 } as const;
 
 // === FONCTIONS UTILITAIRES POUR LE CACHE LOCAL ===
@@ -358,19 +358,32 @@ export function useFormulas() {
   }, []);
 
   const updateFormula = useCallback(async (id: string, updates: Partial<Formula>) => {
-    if (isSupabaseConfigured()) {
-      await updateFormulaInDB(id, updates);
-      const freshData = await fetchFormulas();
-      setFormulas(freshData);
-      saveToStorage(STORAGE_KEYS.FORMULAS, freshData);
-      return;
-    }
-    
+    // Mise à jour optimiste locale d'abord
     setFormulas(prev => {
       const updated = prev.map(f => f.id === id ? { ...f, ...updates } : f);
       saveToStorage(STORAGE_KEYS.FORMULAS, updated);
       return updated;
     });
+    
+    if (isSupabaseConfigured()) {
+      try {
+        const result = await updateFormulaInDB(id, updates);
+        if (result) {
+          // Si la mise à jour a réussi, rafraîchir les données
+          const freshData = await fetchFormulas();
+          setFormulas(freshData);
+          saveToStorage(STORAGE_KEYS.FORMULAS, freshData);
+        } else {
+          console.error('Failed to update formula in database');
+          // L'état local reste car la mise à jour optimiste est déjà faite
+          // On pourrait afficher une notification d'erreur ici
+        }
+      } catch (error) {
+        console.error('Error updating formula:', error);
+        // En cas d'erreur, on garde la mise à jour locale
+        // L'utilisateur peut réessayer
+      }
+    }
   }, []);
 
   const removeFormula = useCallback(async (id: string) => {
@@ -531,7 +544,7 @@ export function useAdmin() {
   }, []);
 
   const login = useCallback((password: string): boolean => {
-    const ADMIN_PASSWORD = 'mathunivers2024';
+    const ADMIN_PASSWORD = 'physchem2026';
     if (password === ADMIN_PASSWORD) {
       setIsAdmin(true);
       saveToStorage(STORAGE_KEYS.ADMIN_SESSION, true);

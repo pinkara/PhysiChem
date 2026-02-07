@@ -95,7 +95,7 @@ function LoginForm({ onLogin }: { onLogin: (password: string) => boolean }) {
 
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600"
           >
             Se connecter
           </Button>
@@ -1112,7 +1112,7 @@ export function AdminPage(props: AdminPageProps) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-1">Panel Administrateur</h1>
-            <p className="text-purple-100">Gérez le contenu de MathUnivers</p>
+            <p className="text-purple-100">Gérez le contenu de PhysiChem</p>
           </div>
           <Button 
             onClick={onLogout}

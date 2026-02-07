@@ -12,6 +12,7 @@ import { IDEPage } from '@/sections/IDEPage';
 import { SubjectsPortal } from '@/sections/SubjectsPortal';
 import { ArticlePage } from '@/sections/ArticlePage';
 import { AdminPage } from '@/sections/AdminPage';
+import { PeriodicTablePage } from '@/sections/PeriodicTablePage';
 import { useRouter } from '@/hooks/useRouter';
 import { 
   useCourses, 
@@ -91,29 +92,31 @@ function LoadingScreen() {
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-50 via-white to-pink-50 flex flex-col items-center justify-center z-50">
       <div className="relative mb-8">
-        <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center shadow-2xl animate-pulse">
-          <span className="text-white text-5xl font-bold">∑</span>
+        <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-2xl animate-pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-16 h-16 text-white">
+            <path d="M10 2v7.31"/><path d="M14 2v7.31"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/>
+          </svg>
         </div>
-        <div className="absolute inset-0 border-4 border-blue-400 rounded-2xl animate-ping opacity-20"></div>
+        <div className="absolute inset-0 border-4 border-purple-400 rounded-2xl animate-ping opacity-20"></div>
       </div>
       
       <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mb-6">
         <div 
-          className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-300"
+          className="h-full bg-gradient-to-r from-purple-500 to-pink-600 rounded-full transition-all duration-300"
           style={{ width: `${Math.min(progress, 100)}%` }}
         ></div>
       </div>
       
       <div className="text-center">
         <h3 className="text-2xl font-bold text-gray-800 mb-2">
-          <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            MathUnivers
+          <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent">
+            PhysiChem
           </span>
         </h3>
         <p className="text-gray-600 text-sm">
-          Chargement de l'encyclopédie mathématique...
+          Chargement de l'encyclopédie physique-chimie...
         </p>
       </div>
     </div>
@@ -285,6 +288,9 @@ function App() {
       case 'subjects':
         return <SubjectsPortal />;
       
+      case 'periodic-table':
+        return <PeriodicTablePage />;
+      
       case 'article':
         if (state.params?.type && state.params?.id) {
           return (
@@ -381,12 +387,12 @@ function App() {
       <footer className="bg-white border-t border-gray-200 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              MathUnivers
+            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              PhysiChem
             </span>
           </div>
           <p className="text-gray-500 text-sm">
-            Encyclopédie mathématique participative
+            Encyclopédie physique-chimie participative
           </p>
           <div className="flex items-center justify-center gap-4 mt-4">
             <a 

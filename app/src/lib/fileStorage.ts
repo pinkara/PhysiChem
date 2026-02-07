@@ -1,7 +1,7 @@
 // === STOCKAGE LOCAL DE FICHIERS (IndexedDB) ===
 // Fallback quand Supabase n'est pas configuré
 
-const DB_NAME = 'MathUniversFiles';
+const DB_NAME = 'PhysiChemFiles';
 const DB_VERSION = 1;
 const STORE_NAME = 'files';
 
