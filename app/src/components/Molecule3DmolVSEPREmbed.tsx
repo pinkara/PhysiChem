@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { RotateCcw, Atom, AlertCircle } from 'lucide-react';
 
 // --- TYPES ---
 type DisplayMode = 'spacefill' | 'ballstick' | 'ball' | 'stick' | 'lines';
-type ChargeType = 'positive' | 'negative' | 'neutral';
 
 interface Atom3D {
   elem: string;
