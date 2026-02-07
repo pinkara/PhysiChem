@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#9333ea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#db2777;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="20" fill="url(#grad)"/>
+  <!-- Icône FlaskConical (même que le loading screen) -->
+  <g transform="translate(50, 50) translate(-35, -35) scale(2.9)" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 2v7.31"/>
+    <path d="M14 2v7.31"/>
+    <path d="M8.5 2h7"/>
+    <path d="M14 9.3a6.5 6.5 0 1 1-4 0"/>
+  </g>
+</svg>

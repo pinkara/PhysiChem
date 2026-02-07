@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="L'encyclopédie physique-chimie collaborative - Cours, expériences et formules pour tous les niveaux" />
+    <meta name="theme-color" content="#9333ea" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="PhysiChem" />
+    
+    <!-- Favicon et icônes -->
+    <link rel="icon" type="image/svg+xml" href="/mathsite/favicon.svg" />
+    <link rel="alternate icon" href="/mathsite/favicon.svg" />
+    <link rel="apple-touch-icon" href="/mathsite/icon-192x192.png" />
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="/mathsite/manifest.json" />
+    
+    <title>PhysiChem</title>
+    
+    <!-- Enregistrement du Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('[PWA] Service Worker enregistré:', registration.scope);
+            })
+            .catch((error) => {
+              console.error('[PWA] Erreur Service Worker:', error);
+            });
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="/mathsite/assets/index-B4UmZ8tu.js"></script>
+    <link rel="stylesheet" crossorigin href="/mathsite/assets/index-Cbj4rQFo.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
