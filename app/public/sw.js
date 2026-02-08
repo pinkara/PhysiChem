@@ -1,10 +1,10 @@
 // Service Worker pour PhysiChem PWA
 const CACHE_NAME = 'physichem-v1';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/favicon.svg',
-  '/manifest.json'
+  './',
+  './index.html',
+  './favicon.svg',
+  './manifest.json'
 ];
 
 // Vérifier si une requête est valide pour le cache
@@ -91,7 +91,7 @@ self.addEventListener('fetch', (event) => {
           }
           // Si pas dans le cache, retourner la page offline
           if (event.request.mode === 'navigate') {
-            return caches.match('/index.html');
+            return caches.match('./index.html');
           }
         });
       })
