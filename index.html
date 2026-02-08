@@ -10,12 +10,12 @@
     <meta name="apple-mobile-web-app-title" content="PhysiChem" />
     
     <!-- Favicon et icônes -->
-    <link rel="icon" type="image/svg+xml" href="/PhysiChem/favicon.svg" />
-    <link rel="alternate icon" href="/PhysiChem/favicon.svg" />
-    <link rel="apple-touch-icon" href="/PhysiChem/icon-192x192.png" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="alternate icon" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./icon-192x192.png" />
     
     <!-- Manifest PWA -->
-    <link rel="manifest" href="/PhysiChem/manifest.json" />
+    <link rel="manifest" href="./manifest.json" />
     
     <title>PhysiChem</title>
     
@@ -23,7 +23,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
+          navigator.serviceWorker.register('./sw.js')
             .then((registration) => {
               console.log('[PWA] Service Worker enregistré:', registration.scope);
             })
@@ -33,7 +33,7 @@
         });
       }
     </script>
-    <script type="module" crossorigin src="/PhysiChem/assets/index-LkB6Kve3.js"></script>
+    <script type="module" crossorigin src="/PhysiChem/assets/index-vb7GKHAu.js"></script>
     <link rel="stylesheet" crossorigin href="/PhysiChem/assets/index-BTt3mjnT.css">
   </head>
   <body>

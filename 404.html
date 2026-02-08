@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PhysiChem</title>
+  <script>
+    // Récupère le chemin actuel
+    const path = window.location.pathname;
+    const repo = '/PhysiChem';
+    
+    // Redirige vers l'index avec la route dans le hash
+    if (path.startsWith(repo)) {
+      const route = path.slice(repo.length);
+      window.location.replace(repo + '/#' + route + window.location.search);
+    } else {
+      window.location.replace('/#' + path + window.location.search);
+    }
+  </script>
+</head>
+<body>
+  Redirection...
+</body>
+</html>
