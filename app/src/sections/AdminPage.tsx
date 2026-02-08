@@ -772,6 +772,37 @@ function ProblemsManager({
     }));
   };
 
+  const [editingHintId, setEditingHintId] = useState<string | null>(null);
+  const [editHintData, setEditHintData] = useState({ content: '', formulaRefs: '' });
+
+  const startEditHint = (hint: typeof formData.hints[0]) => {
+    setEditingHintId(hint.id);
+    setEditHintData({
+      content: hint.content,
+      formulaRefs: hint.formulaRefs.join(', ')
+    });
+  };
+
+  const saveHintEdit = () => {
+    if (editingHintId) {
+      setFormData(prev => ({
+        ...prev,
+        hints: prev.hints.map(h => 
+          h.id === editingHintId 
+            ? { ...h, content: editHintData.content, formulaRefs: editHintData.formulaRefs.split(',').map(s => s.trim()).filter(Boolean) }
+            : h
+        )
+      }));
+      setEditingHintId(null);
+      setEditHintData({ content: '', formulaRefs: '' });
+    }
+  };
+
+  const cancelHintEdit = () => {
+    setEditingHintId(null);
+    setEditHintData({ content: '', formulaRefs: '' });
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -914,27 +945,65 @@ function ProblemsManager({
                 <div className="space-y-2 mb-4">
                   {formData.hints.map((hint, index) => (
                     <div key={hint.id} className="bg-white p-3 rounded-lg border border-gray-200">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <span className="text-xs font-medium text-gray-500">Indice {index + 1}</span>
-                          <p className="text-sm text-gray-700 mt-1">{hint.content}</p>
-                          {hint.formulaRefs.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {hint.formulaRefs.map(ref => (
-                                <span key={ref} className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
-                                  {ref}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                      {editingHintId === hint.id ? (
+                        /* Mode édition */
+                        <div className="space-y-2">
+                          <span className="text-xs font-medium text-orange-600">Modifier l'indice {index + 1}</span>
+                          <textarea
+                            value={editHintData.content}
+                            onChange={(e) => setEditHintData(prev => ({ ...prev, content: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                            rows={2}
+                          />
+                          <Input
+                            value={editHintData.formulaRefs}
+                            onChange={(e) => setEditHintData(prev => ({ ...prev, formulaRefs: e.target.value }))}
+                            placeholder="Codes des formules (séparés par des virgules)"
+                            className="text-sm"
+                          />
+                          <div className="flex gap-2">
+                            <Button type="button" size="sm" onClick={saveHintEdit} className="bg-orange-600">
+                              <Save className="w-3 h-3 mr-1" />
+                              Enregistrer
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" onClick={cancelHintEdit}>
+                              <X className="w-3 h-3 mr-1" />
+                              Annuler
+                            </Button>
+                          </div>
                         </div>
-                        <button
-                          onClick={() => removeHint(hint.id)}
-                          className="p-1 text-gray-400 hover:text-red-600"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
+                      ) : (
+                        /* Mode affichage */
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <span className="text-xs font-medium text-gray-500">Indice {index + 1}</span>
+                            <p className="text-sm text-gray-700 mt-1">{hint.content}</p>
+                            {hint.formulaRefs.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {hint.formulaRefs.map(ref => (
+                                  <span key={ref} className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                                    {ref}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 ml-2">
+                            <button
+                              onClick={() => startEditHint(hint)}
+                              className="p-1 text-gray-400 hover:text-orange-600"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => removeHint(hint.id)}
+                              className="p-1 text-gray-400 hover:text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1112,6 +1181,14 @@ function FormulasManager({
     level: 'Term' as Level,
     description: '',
     code: '',
+    variables: [] as { symbol: string; name: string; unit: string; description?: string }[],
+  });
+
+  const [newVariable, setNewVariable] = useState({
+    symbol: '',
+    name: '',
+    unit: '',
+    description: '',
   });
 
   const resetForm = () => {
@@ -1122,7 +1199,9 @@ function FormulasManager({
       level: 'Term',
       description: '',
       code: '',
+      variables: [],
     });
+    setNewVariable({ symbol: '', name: '', unit: '', description: '' });
   };
 
   const handleSubmit = () => {
@@ -1146,9 +1225,53 @@ function FormulasManager({
       level: formula.level,
       description: formula.description || '',
       code: formula.code,
+      variables: formula.variables || [],
     });
     setEditingId(formula.id);
     setIsAdding(true);
+  };
+
+  const addVariable = () => {
+    if (newVariable.symbol && newVariable.name && newVariable.unit) {
+      setFormData(prev => ({
+        ...prev,
+        variables: [...prev.variables, { ...newVariable }]
+      }));
+      setNewVariable({ symbol: '', name: '', unit: '', description: '' });
+    }
+  };
+
+  const removeVariable = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      variables: prev.variables.filter((_, i) => i !== index)
+    }));
+  };
+
+  const [editingVariableIndex, setEditingVariableIndex] = useState<number | null>(null);
+  const [editVariableData, setEditVariableData] = useState<{ symbol: string; name: string; unit: string; description?: string }>({ symbol: '', name: '', unit: '', description: '' });
+
+  const startEditVariable = (variable: typeof formData.variables[0], index: number) => {
+    setEditingVariableIndex(index);
+    setEditVariableData({ ...variable });
+  };
+
+  const saveVariableEdit = () => {
+    if (editingVariableIndex !== null) {
+      setFormData(prev => ({
+        ...prev,
+        variables: prev.variables.map((v, i) => 
+          i === editingVariableIndex ? { ...editVariableData } : v
+        )
+      }));
+      setEditingVariableIndex(null);
+      setEditVariableData({ symbol: '', name: '', unit: '' });
+    }
+  };
+
+  const cancelVariableEdit = () => {
+    setEditingVariableIndex(null);
+    setEditVariableData({ symbol: '', name: '', unit: '' });
   };
 
   return (
@@ -1217,6 +1340,151 @@ function FormulasManager({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                 rows={2}
               />
+            </div>
+
+            {/* Variables Section */}
+            <div className="md:col-span-2 border-t border-gray-200 pt-4 mt-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <Calculator className="w-4 h-4" />
+                Variables et unités
+                <span className="text-gray-400 font-normal">(optionnel)</span>
+              </label>
+              
+              {/* Liste des variables existantes */}
+              {formData.variables.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+                  {formData.variables.map((variable, index) => (
+                    <div key={index} className="bg-white p-3 rounded-lg border border-gray-200">
+                      {editingVariableIndex === index ? (
+                        /* Mode édition */
+                        <div className="space-y-2">
+                          <span className="text-xs font-medium text-purple-600">Modifier la variable</span>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={editVariableData.symbol}
+                              onChange={(e) => setEditVariableData(prev => ({ ...prev, symbol: e.target.value }))}
+                              placeholder="Symbole"
+                              className="font-mono text-sm"
+                            />
+                            <Input
+                              value={editVariableData.unit}
+                              onChange={(e) => setEditVariableData(prev => ({ ...prev, unit: e.target.value }))}
+                              placeholder="Unité"
+                              className="font-mono text-sm"
+                            />
+                          </div>
+                          <Input
+                            value={editVariableData.name}
+                            onChange={(e) => setEditVariableData(prev => ({ ...prev, name: e.target.value }))}
+                            placeholder="Nom complet"
+                            className="text-sm"
+                          />
+                          <Input
+                            value={editVariableData.description}
+                            onChange={(e) => setEditVariableData(prev => ({ ...prev, description: e.target.value }))}
+                            placeholder="Description (optionnel)"
+                            className="text-sm"
+                          />
+                          <div className="flex gap-2">
+                            <Button type="button" size="sm" onClick={saveVariableEdit} className="bg-purple-600">
+                              <Save className="w-3 h-3 mr-1" />
+                              Enregistrer
+                            </Button>
+                            <Button type="button" variant="outline" size="sm" onClick={cancelVariableEdit}>
+                              <X className="w-3 h-3 mr-1" />
+                              Annuler
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* Mode affichage */
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <code className="text-sm font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">
+                                ${variable.symbol}$
+                              </code>
+                              <span className="text-xs text-gray-500">{variable.unit}</span>
+                            </div>
+                            <p className="text-sm text-gray-700 mt-1">{variable.name}</p>
+                            {variable.description && (
+                              <p className="text-xs text-gray-500">{variable.description}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 ml-2">
+                            <button
+                              onClick={() => startEditVariable(variable, index)}
+                              className="p-1 text-gray-400 hover:text-purple-600"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => removeVariable(index)}
+                              className="p-1 text-gray-400 hover:text-red-600"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Ajouter une nouvelle variable */}
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <p className="text-sm font-medium text-gray-700 mb-2">Nouvelle variable</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Symbole (LaTeX)</label>
+                    <Input
+                      value={newVariable.symbol}
+                      onChange={(e) => setNewVariable(prev => ({ ...prev, symbol: e.target.value }))}
+                      placeholder="ex: n, \\rho, V"
+                      className="font-mono text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Unité (LaTeX)</label>
+                    <Input
+                      value={newVariable.unit}
+                      onChange={(e) => setNewVariable(prev => ({ ...prev, unit: e.target.value }))}
+                      placeholder="ex: \\pu{mol}"
+                      className="font-mono text-sm"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs text-gray-500 mb-1">Nom complet</label>
+                    <Input
+                      value={newVariable.name}
+                      onChange={(e) => setNewVariable(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="ex: Quantité de matière"
+                      className="text-sm"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs text-gray-500 mb-1">Description (optionnel)</label>
+                    <Input
+                      value={newVariable.description}
+                      onChange={(e) => setNewVariable(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="ex: Volume du liquide à température ambiante"
+                      className="text-sm"
+                    />
+                  </div>
+                </div>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={addVariable}
+                  className="mt-3"
+                  disabled={!newVariable.symbol || !newVariable.name || !newVariable.unit}
+                >
+                  <Plus className="w-4 h-4 mr-1" />
+                  Ajouter la variable
+                </Button>
+              </div>
             </div>
           </div>
           <div className="flex gap-2 mt-4">

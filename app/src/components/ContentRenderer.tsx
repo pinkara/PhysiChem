@@ -13,6 +13,9 @@ import { Molecule3DmolNative } from './Molecule3DmolNative';
 import { MoleculeJSmolVSEPR } from './MoleculeJSmolVSEPR';
 import { Molecule3DmolVSEPR } from './Molecule3DmolVSEPR';
 import { Molecule3DmolVSEPREmbed } from './Molecule3DmolVSEPREmbed';
+import { CircuitSimulatorEmbed } from './CircuitSimulatorEmbed';
+import { CircuitJSEmbed } from './CircuitJSEmbed';
+import { MechanicsSimulatorEmbed } from './MechanicsSimulatorEmbed';
 import { GlossaryTerm } from './GlossaryTerm';
 
 interface ContentRendererProps {
@@ -411,6 +414,9 @@ type ContentPart =
   | { type: 'molecule3DmolVSEPR'; formula: string; title?: string; height?: string; credits?: string }
   | { type: 'molecule3DmolVSEPREmbed'; formula: string; height?: string; credits?: string; controls?: boolean }
   | { type: 'molecule3DmolVSEPRSimple'; formula: string; height?: string; credits?: string }
+  | { type: 'circuitSimulator'; height?: string; controls?: boolean }
+  | { type: 'circuitJS'; height?: string; circuit?: string; format?: 'cct' | 'ctz'; url?: string; controls?: boolean }
+  | { type: 'mechanicsSimulator'; height?: string; controls?: boolean }
   | { type: 'glossary'; term: string; definition: string; content?: string };
 
 function parseContent(content: string): ContentPart[] {
@@ -437,6 +443,9 @@ function parseContent(content: string): ContentPart[] {
   const molecule3DmolVSEPRRegex = /<molecule-3dmol-vsepr\s+formula=["']([^"']+)["'](?:\s+title=["']([^"]*)["'])?(?:\s+height=["']([^"]*)["'])?(?:\s+credits=["']([^"]*)["'])?\s*\/>/gi;
   const molecule3DmolVSEPREmbedRegex = /<molecule-3d-vsepr\s+formula=["']([^"']+)["'](?:\s+height=["']([^"]*)["'])?(?:\s+credits=["']([^"]*)["'])?(?:\s+controls=["']([^"]*)["'])?\s*\/>/gi;
   const molecule3DmolVSEPRSimpleRegex = /<molecule-3d-simple\s+formula=["']([^"']+)["'](?:\s+height=["']([^"]*)["'])?(?:\s+credits=["']([^"]*)["'])?\s*\/>/gi;
+  const circuitSimulatorRegex = /<circuit-simulator(?:\s+height=["']([^"]*)["'])?(?:\s+controls=["']([^"]*)["'])?\s*\/>/gi;
+  const circuitJSRegex = /<circuit-js(?:\s+height=["']([^"]*)["'])?(?:\s+circuit=["']([^"]*)["'])?(?:\s+format=["']([^"]*)["'])?(?:\s+url=["']([^"]*)["'])?(?:\s+controls=["']([^"]*)["'])?\s*\/>/gi;
+  const mechanicsSimulatorRegex = /<mechanics-simulator(?:\s+height=["']([^"]*)["'])?(?:\s+controls=["']([^"]*)["'])?\s*\/>/gi;
   const glossaryRegex = /<glossary-term\s+term=["']([^"']+)["']\s+definition=["']([^"]*)["']\s*>(.*?)<\/glossary-term>/gi;
   
   // Combiner tous les regex avec leur type
@@ -461,6 +470,9 @@ function parseContent(content: string): ContentPart[] {
     { regex: molecule3DmolVSEPRRegex, type: 'molecule3DmolVSEPR' },
     { regex: molecule3DmolVSEPREmbedRegex, type: 'molecule3DmolVSEPREmbed' },
     { regex: molecule3DmolVSEPRSimpleRegex, type: 'molecule3DmolVSEPRSimple' },
+    { regex: circuitSimulatorRegex, type: 'circuitSimulator' },
+    { regex: circuitJSRegex, type: 'circuitJS' },
+    { regex: mechanicsSimulatorRegex, type: 'mechanicsSimulator' },
     { regex: glossaryRegex, type: 'glossary' },
   ];
   
@@ -709,6 +721,33 @@ function parseContent(content: string): ContentPart[] {
           formula: match[1],
           height: match[2],
           credits: match[3],
+        });
+        break;
+      }
+      case 'circuitSimulator': {
+        parts.push({
+          type: 'circuitSimulator',
+          height: match[1],
+          controls: match[2] !== 'false',
+        });
+        break;
+      }
+      case 'circuitJS': {
+        parts.push({
+          type: 'circuitJS',
+          height: match[1],
+          circuit: match[2],
+          format: match[3] as 'cct' | 'ctz' | undefined,
+          url: match[4],
+          controls: match[5] !== 'false',
+        });
+        break;
+      }
+      case 'mechanicsSimulator': {
+        parts.push({
+          type: 'mechanicsSimulator',
+          height: match[1],
+          controls: match[2] !== 'false',
         });
         break;
       }
@@ -1024,6 +1063,33 @@ export function ContentRenderer({ content, className = '' }: ContentRendererProp
                 height={part.height}
                 credits={part.credits}
                 controls={false}
+              />
+            );
+          case 'circuitSimulator':
+            return (
+              <CircuitSimulatorEmbed
+                key={index}
+                height={part.height}
+                controls={part.controls?.toString()}
+              />
+            );
+          case 'circuitJS':
+            return (
+              <CircuitJSEmbed
+                key={index}
+                height={part.height}
+                circuit={part.circuit}
+                format={part.format}
+                url={part.url}
+                controls={part.controls?.toString()}
+              />
+            );
+          case 'mechanicsSimulator':
+            return (
+              <MechanicsSimulatorEmbed
+                key={index}
+                height={part.height}
+                controls={part.controls?.toString()}
               />
             );
           case 'glossary':

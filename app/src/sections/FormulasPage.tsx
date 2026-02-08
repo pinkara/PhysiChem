@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { LevelBadge } from '@/components/LevelBadge';
 import { TitleWithFormula } from '@/components/InlineFormula';
+import { FormulaVariables } from '@/components/FormulaVariables';
 import type { Formula, Level } from '@/types';
 import { LEVELS } from '@/types';
 
@@ -250,6 +251,11 @@ export function FormulasPage({ formulas, highlightFormula }: FormulasPageProps) 
                         <div className="bg-gray-50 rounded-lg p-3 md:p-4 overflow-x-auto">
                           <FormulaMath tex={formula.tex} />
                         </div>
+
+                        {/* Variables & Units */}
+                        {formula.variables && formula.variables.length > 0 && (
+                          <FormulaVariables variables={formula.variables} />
+                        )}
                       </div>
 
                       {/* Right: Actions */}

@@ -247,29 +247,67 @@ export async function fetchFormulas(): Promise<Formula[]> {
     console.error('Error fetching formulas:', error.message);
     return [];
   }
-  return data || [];
+  
+  // Parser les variables JSON si nécessaire
+  return (data || []).map((formula: any) => ({
+    ...formula,
+    variables: formula.variables || []
+  }));
 }
 
 export async function addFormulaToDB(formula: Omit<Formula, 'id'>) {
   if (!supabase) return null;
   
+  // Préparer les données pour Supabase
+  const formulaData: any = {
+    name: formula.name,
+    tex: formula.tex,
+    category: formula.category,
+    level: formula.level,
+    code: formula.code,
+    description: formula.description || '',
+    // Convertir variables en JSONB pour Supabase
+    variables: formula.variables && formula.variables.length > 0 ? formula.variables : []
+  };
+  
   const { data, error } = await supabase
     .from('formulas')
-    .insert([formula])
+    .insert([formulaData])
     .select()
     .single();
   
   if (error) {
     console.error('Error adding formula:', error.message);
-    return null;
+    throw new Error(`Supabase: ${error.message} (code: ${error.code})`);
   }
   return data;
 }
 
 export async function updateFormulaInDB(id: string, updates: Partial<Formula>) {
   if (!supabase) return null;
-  const { data, error } = await supabase.from('formulas').update(updates).eq('id', id).select().single();
-  if (error) return null;
+  
+  // Préparer les données pour Supabase
+  const updateData: any = {};
+  
+  if (updates.name !== undefined) updateData.name = updates.name;
+  if (updates.tex !== undefined) updateData.tex = updates.tex;
+  if (updates.category !== undefined) updateData.category = updates.category;
+  if (updates.level !== undefined) updateData.level = updates.level;
+  if (updates.code !== undefined) updateData.code = updates.code;
+  if (updates.description !== undefined) updateData.description = updates.description;
+  // Convertir variables en JSONB pour Supabase
+  if (updates.variables !== undefined) {
+    updateData.variables = updates.variables && updates.variables.length > 0 ? updates.variables : [];
+  }
+  
+  console.log('Updating formula:', id, updateData);
+  
+  const { data, error } = await supabase.from('formulas').update(updateData).eq('id', id).select().single();
+  
+  if (error) {
+    console.error('Error updating formula:', error.message);
+    throw new Error(`Supabase: ${error.message} (code: ${error.code})`);
+  }
   return data;
 }
 

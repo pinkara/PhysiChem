@@ -233,6 +233,51 @@ export const initialFormulas: Formula[] = [
     code: 'RES-001',
     description: 'Outil puissant pour calculer des intégrales complexes.',
   },
+  {
+    id: 'f11',
+    name: 'Quantité de matière d\'un corps pur liquide',
+    tex: 'n = \\frac{\\rho \\times V}{M}',
+    category: 'Chimie - Quantité de matière',
+    level: '1re',
+    code: 'CHIM-N-001',
+    description: 'Calcul de la quantité de matière à partir de la masse volumique et du volume.',
+    variables: [
+      { symbol: 'n', name: 'Quantité de matière', unit: '\\pu{mol}' },
+      { symbol: '\\rho', name: 'Masse volumique', unit: '\\pu{g\\cdot L^{-1}}' },
+      { symbol: 'V', name: 'Volume du liquide', unit: '\\pu{L}' },
+      { symbol: 'M', name: 'Masse molaire', unit: '\\pu{g\\cdot mol^{-1}}' },
+    ],
+  },
+  {
+    id: 'f12',
+    name: 'Concentration molaire',
+    tex: 'C = \\frac{n}{V}',
+    category: 'Chimie - Solutions',
+    level: '1re',
+    code: 'CHIM-C-001',
+    description: 'Relation entre concentration, quantité de matière et volume de solution.',
+    variables: [
+      { symbol: 'C', name: 'Concentration molaire', unit: '\\pu{mol\\cdot L^{-1}}', description: 'Quantité de matière par litre de solution' },
+      { symbol: 'n', name: 'Quantité de matière', unit: '\\pu{mol}' },
+      { symbol: 'V', name: 'Volume de solution', unit: '\\pu{L}' },
+    ],
+  },
+  {
+    id: 'f13',
+    name: 'Loi des gaz parfaits',
+    tex: 'PV = nRT',
+    category: 'Chimie - Thermodynamique',
+    level: '2nde',
+    code: 'CHIM-PV-001',
+    description: 'Relation fondamentale entre pression, volume et température d\'un gaz.',
+    variables: [
+      { symbol: 'P', name: 'Pression', unit: '\\pu{Pa}', description: 'Pression du gaz' },
+      { symbol: 'V', name: 'Volume', unit: '\\pu{m^3}', description: 'Volume occupé par le gaz' },
+      { symbol: 'n', name: 'Quantité de matière', unit: '\\pu{mol}' },
+      { symbol: 'R', name: 'Constante des gaz parfaits', unit: '\\pu{J\\cdot mol^{-1}\\cdot K^{-1}}', description: 'R = 8,314' },
+      { symbol: 'T', name: 'Température absolue', unit: '\\pu{K}', description: 'Température en Kelvin' },
+    ],
+  },
 ];
 
 export const initialBooks: Book[] = [

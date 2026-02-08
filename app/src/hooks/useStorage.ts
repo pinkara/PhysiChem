@@ -313,6 +313,9 @@ export function useProblems() {
   return { problems, addProblem, updateProblem, removeProblem, getProblemById, isLoaded };
 }
 
+// === DONNÉES DE DÉMONSTRATION (avec variables) ===
+import { initialFormulas } from '@/data/initialData';
+
 // === HOOK POUR LES FORMULES (SUPABASE PRIORITAIRE) ===
 export function useFormulas() {
   const [formulas, setFormulas] = useState<Formula[]>([]);
@@ -338,7 +341,25 @@ export function useFormulas() {
       } else {
         console.log('Supabase not configured, using local cache');
         const cached = loadFromStorage<Formula[]>(STORAGE_KEYS.FORMULAS, []);
-        setFormulas(cached);
+        
+        // Si pas de données en cache, utiliser les données initiales avec les nouvelles formules
+        if (cached.length === 0) {
+          console.log('No cached formulas, loading initial data with variables...');
+          setFormulas(initialFormulas);
+          saveToStorage(STORAGE_KEYS.FORMULAS, initialFormulas);
+        } else {
+          // Fusionner les nouvelles formules de démonstration si elles n'existent pas
+          const demoFormulas = initialFormulas.filter(init => 
+            !cached.some(existing => existing.id === init.id)
+          );
+          if (demoFormulas.length > 0) {
+            const merged = [...cached, ...demoFormulas];
+            setFormulas(merged);
+            saveToStorage(STORAGE_KEYS.FORMULAS, merged);
+          } else {
+            setFormulas(cached);
+          }
+        }
       }
       setIsLoaded(true);
     };

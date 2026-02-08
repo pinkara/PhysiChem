@@ -72,6 +72,7 @@ export type ViewMode =
   | 'category' 
   | 'block'
   | 'state'
+  | 'jmol-colors'
   // === PROPRIÉTÉS ÉLECTRONIQUES ===
   | 'electronegativity-pauling'
   | 'electronegativity-allred'
@@ -105,6 +106,7 @@ const VIEW_GROUPS = [
       { id: 'category', label: 'Familles', icon: Layers },
       { id: 'block', label: 'Blocs s/p/d/f', icon: Atom },
       { id: 'state', label: 'État (T ambiante)', icon: Droplets },
+      { id: 'jmol-colors', label: 'Couleur des atomes (Jmol)', icon: Atom },
     ]
   },
   {
@@ -179,6 +181,10 @@ function getElementColorByViewMode(element: Element, viewMode: ViewMode): string
         'unknown': 'bg-gray-100'
       };
       return stateColors[element.stateAtSTP || 'unknown'];
+
+    case 'jmol-colors':
+      // Couleurs Jmol - retourne une classe CSS avec la couleur en ligne
+      return '';
 
     // === ÉLECTRONÉGATIVITÉ PAULING ===
     case 'electronegativity-pauling':
@@ -530,16 +536,23 @@ export function PeriodicTablePage() {
     const displayValue = getElementDisplayValue(element, viewMode);
     const unit = getValueUnit(viewMode);
     
+    // Couleur Jmol si le mode est actif
+    const jmolColor = viewMode === 'jmol-colors' ? getJmolColor(element.symbol) : null;
+    
     return (
       <button
         onClick={() => setSelectedElement(element)}
         className={cn(
           "relative p-1 rounded border-2 transition-all duration-200",
           "hover:scale-110 hover:shadow-lg hover:z-10",
-          getElementColorByViewMode(element, viewMode),
+          !jmolColor && getElementColorByViewMode(element, viewMode),
           !isFiltered && "opacity-20 grayscale",
           selectedElement?.symbol === element.symbol && "ring-2 ring-purple-600 ring-offset-2 scale-105 z-10"
         )}
+        style={jmolColor ? { 
+          backgroundColor: jmolColor,
+          borderColor: '#rgba(0,0,0,0.2)'
+        } : undefined}
         title={`${element.frenchName} (${element.symbol})`}
       >
         <div className="text-[9px] leading-none font-medium">{element.atomicNumber}</div>
@@ -805,6 +818,19 @@ function Legend({ viewMode }: { viewMode: ViewMode }) {
         { color: 'bg-blue-300', label: 'Liquide' },
         { color: 'bg-yellow-200', label: 'Gaz' },
         { color: 'bg-gray-100', label: 'Inconnu' },
+      ]
+    },
+    'jmol-colors': {
+      title: 'Couleurs des atomes (Jmol)',
+      items: [
+        { color: 'bg-white border border-gray-300', label: 'H, He (Blanc, cyan clair)' },
+        { color: 'bg-gray-500', label: 'C (Gris)' },
+        { color: 'bg-blue-600', label: 'N (Bleu)' },
+        { color: 'bg-red-600', label: 'O (Rouge)' },
+        { color: 'bg-yellow-300', label: 'S (Jaune)' },
+        { color: 'bg-green-500', label: 'Cl (Vert)' },
+        { color: 'bg-yellow-500', label: 'Fe (Orange/jaune)' },
+        { color: 'bg-gray-300', label: 'Autres (Variées)' },
       ]
     },
     'electronegativity-pauling': {
@@ -1273,7 +1299,7 @@ function ElementDetails({ element, onClose }: { element: Element | null; onClose
 // COMPOSANTS UTILITAIRES
 // ============================================================
 
-function DetailSection({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
+function DetailSection({ icon: Icon, title, children }: { icon: any; title: string; children: React.ReactNode }) {
   return (
     <div className="border-b border-gray-100 pb-3 last:border-0">
       <h4 className="flex items-center gap-2 font-semibold text-gray-700 mb-2 text-sm">

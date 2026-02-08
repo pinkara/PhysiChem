@@ -41,6 +41,14 @@ export const getLevelConfig = (level: Level): LevelConfig => {
   return LEVELS.find(l => l.name === level) || LEVELS[0];
 };
 
+// === VARIABLES (pour les formules) ===
+export interface FormulaVariable {
+  symbol: string;      // Symbole de la variable (ex: 'n', '\rho')
+  name: string;        // Nom complet (ex: 'Quantité de matière')
+  unit: string;        // Unité avec LaTeX (ex: '\\pu{mol}')
+  description?: string; // Description optionnelle
+}
+
 // === FORMULES ===
 export interface Formula {
   id: string;
@@ -50,6 +58,7 @@ export interface Formula {
   description?: string;
   level: Level;
   code: string; // Code unique pour référencement
+  variables?: FormulaVariable[]; // Variables et leurs unités
 }
 
 export interface FormulaCategory {
